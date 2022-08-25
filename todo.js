@@ -9,7 +9,8 @@ const request = require("request");
 const app = express();
 
 
-var items = [];
+var items = ["groceries", "medicines", "water"];
+var workitems = ["laptop", "pen", "Mobile"];
 
 app.set('view engine', 'ejs');
 
@@ -31,7 +32,8 @@ app.get("/", (req, res) => {
   var day = today.toLocaleDateString("en-Us", options);
   res.render("list", {
     userday: day,
-    newitem: items
+    newitem: items,
+
   });
 
 
@@ -40,14 +42,38 @@ app.get("/", (req, res) => {
 
 app.post("/", (req, res) => {
 
-  var item = req.body.Additem;
+  let item = req.body.Additem;
 
-  items.push(item);
+  console.log(req.body);
 
-  res.redirect("/");
+  if(req.body.list === "worklist"){
+    workitems.push(item);
+    res.redirect("/work");
+
+  }else{
+
+    items.push(item);
+
+    res.redirect("/");
+
+
+  }
+
+
 
 
 });
+
+app.get("/work",(req,res)=>{
+  res.render("list",{
+    userday:"worklist",
+    newitem:workitems
+  });
+});
+
+
+
+
 
 
 app.listen(3000, () => {
