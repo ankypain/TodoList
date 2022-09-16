@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 
 const _ = require("lodash");
 
+const port = process.env.PORT || 3000;
+
 mongoose.connect(
   "mongodb+srv://todolist:todolist@todolist.h0yzkga.mongodb.net/todolistDB",
   { useNewUrlParser: true }
@@ -41,10 +43,6 @@ app.use(
 
 app.use(express.static("public"));
 
-app.listen(3000, () => {
-  console.log("server running at 3000");
-});
-
 app.get("/", (req, res) => {
   Item.find({}, function (err, foundItems) {
     if (foundItems.length === 0) {
@@ -60,30 +58,34 @@ app.get("/", (req, res) => {
 });
 
 //creating a dynamic route
-app.get("/:newListName", function (req, res) {
+app.get("/other/:newListName", function (req, res) {
   const newListName = _.capitalize(req.params.newListName);
 
-  newList.findOne({ name: newListName }, function (err, foundItem) {
-    if (!err) {
-      if (!foundItem) {
-        const newlist = new newList({
-          name: newListName,
-          items: item,
-        });
+  if (newListName === "Favicon.ico" || newListName === "Todo.js") {
+    return res.status(404);
+  } else {
+    newList.findOne({ name: newListName }, function (err, foundItem) {
+      if (!err) {
+        if (!foundItem) {
+          const newlist = new newList({
+            name: newListName,
+            items: item,
+          });
 
-        newlist.save();
+          newlist.save();
 
-        res.redirect("/" + newListName);
-      } else {
-        res.render("list", {
-          userday: foundItem.name,
-          newitem: foundItem.items,
-        });
-        //checking the value
-        // console.log(foundItem.name);
+          res.redirect("/other/" + newListName);
+        } else {
+          res.render("list", {
+            userday: foundItem.name,
+            newitem: foundItem.items,
+          });
+          //checking the value
+          // console.log(foundItem.name);
+        }
       }
-    }
-  });
+    });
+  }
 });
 
 app.post("/", (req, res) => {
@@ -103,7 +105,7 @@ app.post("/", (req, res) => {
       foundData.items.push(item);
       foundData.save();
 
-      res.redirect("/" + listName);
+      res.redirect("/other/" + listName);
     });
   }
 });
@@ -128,9 +130,13 @@ app.post("/delete", function (req, res) {
       { $pull: { items: { _id: itemId } } },
       function (err, result) {
         if (!err) {
-          res.redirect("/" + listName);
+          res.redirect("/other/" + listName);
         }
       }
     );
   }
+});
+
+app.listen(port, () => {
+  console.log("server running");
 });
