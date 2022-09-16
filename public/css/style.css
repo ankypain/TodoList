@@ -97,7 +97,7 @@ input[type="text"]:focus {
 }
 
 footer {
-  color: white;
+  color: rgb(16, 14, 14);
   color: rgba(0, 0, 0, 0.5);
   text-align: center;
 }
@@ -106,4 +106,9 @@ footer {
   position: relative;
   right: 180px;
   bottom: 55px;
+}
+
+#footerNote {
+  color: black;
+  text-align: center;
 }
