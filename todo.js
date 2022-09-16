@@ -4,7 +4,12 @@ const mongoose = require("mongoose");
 
 const bodyParser = require("body-parser");
 
-mongoose.connect("mongodb://localhost:27017/todoDB", { useNewUrlParser: true });
+const _ = require("lodash");
+
+mongoose.connect(
+  "mongodb+srv://todolist:todolist@todolist.h0yzkga.mongodb.net/todolistDB",
+  { useNewUrlParser: true }
+);
 
 const itemSchema = new mongoose.Schema({
   item: String,
@@ -56,7 +61,7 @@ app.get("/", (req, res) => {
 
 //creating a dynamic route
 app.get("/:newListName", function (req, res) {
-  const newListName = req.params.newListName;
+  const newListName = _.capitalize(req.params.newListName);
 
   newList.findOne({ name: newListName }, function (err, foundItem) {
     if (!err) {
